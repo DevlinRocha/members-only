@@ -67,9 +67,11 @@ router.post(
   body("password")
     .isLength({ min: 5 })
     .withMessage("password is not long enough"),
-  body("passwordConfirmation").custom((value, { req }) => {
-    return value === req.body.password;
-  }),
+  body("passwordConfirmation")
+    .custom((value, { req }) => {
+      return value === req.body.password;
+    })
+    .withMessage("passwords do not match"),
 
   async (req, res, next) => {
     try {
