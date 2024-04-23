@@ -1,0 +1,28 @@
+<h1><%= title %></h1>
+
+<h2>sign up</h2>
+
+<form method="POST" action="">
+  <div>
+    <input id="email" placeholder="email" name="email" required />
+  </div>
+  <div>
+    <input id="username" placeholder="username" name="username" required />
+  </div>
+  <div>
+    <input id="password" placeholder="password" name="password" required />
+    <input
+      id="passwordConfirmation"
+      placeholder="confirm password"
+      name="passwordConfirmation"
+      required
+    />
+  </div>
+
+  <% if (errors) for (error of errors) { %>
+  <ul>
+    <li><%= error.msg %></li>
+  </ul>
+  <% } %>
+  <button type="submit">Submit</button>
+</form>
