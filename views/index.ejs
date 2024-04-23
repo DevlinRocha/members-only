@@ -1,10 +1,10 @@
 <h1><%= title %></h1>
 
 <ul>
-  <% if (message_list.length > 0) for (message of message_list) { %>
+  <% if (post_list) for (post of post_list) { %>
   <li>
-    <p><%= message.sender %></p>
-    <p><%= message.content %></p>
+    <p><%= post.sender %></p>
+    <p><%= post.content %></p>
   </li>
   <% } else { %>
   <li>There are no posts.</li>
