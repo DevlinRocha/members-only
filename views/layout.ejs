@@ -7,7 +7,22 @@
     <title>Members Only</title>
   </head>
   <body>
-    <nav><a href="/">home</a> <a href="/sign-up">sign up</a></nav>
+    <nav>
+      <a href="/">home</a>
+
+      <% if (user) { %>
+
+      <span><%= user.username %></span>
+
+      <a href="/logout">log out</a>
+
+      <% } else { %>
+
+      <a href="/sign-up">sign up</a>
+      <a href="/login">login</a>
+
+      <% } %>
+    </nav>
     <div class="container">
       <div class="container">
         <div class="full-width"><%- include(content) -%></div>
