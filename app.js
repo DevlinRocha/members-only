@@ -1,11 +1,22 @@
 const createError = require("http-errors");
 const express = require("express");
+const { MongoClient, ObjectId } = require("mongodb");
 const path = require("path");
+const session = require("express-session");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+require("dotenv").config();
+
+const uri = process.env.MONGODB_CONNECTION;
+const client = new MongoClient(uri);
+const { getUser } = require("./utils/db");
 
 const indexRouter = require("./routes/index");
-const userRouter = require("./routes/sign-up");
+const signUpRouter = require("./routes/sign-up");
+const loginRouter = require("./routes/login");
 
 const app = express();
 
@@ -18,9 +29,53 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({
+    secret: process.env.SECRET_WORD,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await getUser("_id", new ObjectId(id), client);
+
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
+});
+
+passport.use(
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      const user = await getUser("username", username, client);
+
+      if (!user) {
+        return done(null, false, { message: "Incorrect username" });
+      }
+
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) {
+        return done(null, false, { message: "Incorrect password" });
+      }
+
+      return done(null, user);
+    } catch (err) {
+      return done(err);
+    }
+  })
+);
 
 app.use("/", indexRouter);
-app.use("/sign-up", userRouter);
+app.use("/sign-up", signUpRouter);
+app.use("/login", loginRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -35,7 +90,7 @@ app.use((error, req, res, next) => {
 
   // render the error page
   res.status(error.status || 500);
-  res.render("error");
+  res.render("error", { user: req.user });
 });
 
 module.exports = app;

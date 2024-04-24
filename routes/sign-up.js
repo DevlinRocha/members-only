@@ -8,29 +8,18 @@ require("dotenv").config();
 
 const uri = process.env.MONGODB_CONNECTION;
 const client = new MongoClient(uri);
-const connectToDatabase = require("../utils/functions");
-
-async function getUser(email) {
-  try {
-    const database = client.db(process.env.DATABASE);
-    const posts = database.collection("users");
-    const data = await posts.findOne({ email });
-
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
-}
+const db = require("../utils/db");
 
 router.get("/", async (req, res, next) => {
   try {
-    await connectToDatabase(client);
+    await db.connectToDatabase(client);
 
     res.render("layout", {
       title: "Members Only",
-      content: "sign_up",
+      content: "sign-up-form",
       stylesheet: "/stylesheets/style.css",
       errors: null,
+      user: req.user,
     });
   } catch (error) {
     console.error(error);
@@ -46,7 +35,7 @@ router.post(
     // Handle the request
 
     try {
-      await connectToDatabase(client);
+      await db.connectToDatabase(client);
     } catch (error) {
       return next(error);
     } finally {
@@ -58,7 +47,7 @@ router.post(
     .isEmail()
     .withMessage("valid email is required")
     .custom(async (value) => {
-      const user = await getUser(value);
+      const user = await db.getUser("email", value, client);
 
       if (user) {
         throw new Error("email already in use");
@@ -76,13 +65,11 @@ router.post(
   async (req, res, next) => {
     try {
       const errors = validationResult(req);
-      console.log({ errors });
-      console.log(errors.errors, errors.formatter);
 
       if (!errors.isEmpty()) {
         return res.status(400).render("layout", {
           title: "Members Only",
-          content: "sign_up",
+          content: "sign-up-form",
           message: "Something went wrong",
           errors: errors.errors,
           stylesheet: "/stylesheets/style.css",
