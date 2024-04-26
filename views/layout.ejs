@@ -12,7 +12,7 @@
 
       <% if (user) { %>
 
-      <span><%= user.username %></span>
+      <a href="<%= `/user/${user.username}` %>"><%= user.username %></a>
 
       <a href="/logout">log out</a>
 

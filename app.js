@@ -17,6 +17,7 @@ const { getUser } = require("./utils/db");
 const indexRouter = require("./routes/index");
 const signUpRouter = require("./routes/sign-up");
 const loginRouter = require("./routes/login");
+const userRouter = require("./routes/user");
 
 const app = express();
 
@@ -76,6 +77,7 @@ passport.use(
 app.use("/", indexRouter);
 app.use("/sign-up", signUpRouter);
 app.use("/login", loginRouter);
+app.use("/user", userRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

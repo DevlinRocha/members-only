@@ -22,7 +22,18 @@
       "numeric"}) : "???"%>
     </p>
   </li>
-  <% } else { %>
+  <% if (user?.admin === true) { %>
+  <form method="POST" action="/delete/:id">
+    <input
+      type="hidden"
+      id="hidden"
+      name="postId"
+      value="<%= `${post._id}` %>"
+    />
+    <button id="submit" type="submit">delete</button>
+  </form>
+
+  <% } %> <% } else { %>
   <li>There are no posts.</li>
   <% } %>
 </ul>

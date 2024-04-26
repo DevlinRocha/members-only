@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 require("dotenv").config();
 
 const uri = process.env.MONGODB_CONNECTION;
@@ -33,7 +33,6 @@ router.get("/", async (req, res, next) => {
   } catch (error) {
     console.error(error);
   } finally {
-    // Ensures that the client will close when you finish/error
     await client.close();
   }
 });
@@ -63,7 +62,6 @@ router.post(
     } catch (error) {
       return next(error);
     } finally {
-      // Ensures that the client will close when you finish/error
       await client.close();
     }
   }
@@ -76,6 +74,24 @@ router.get("/logout", (req, res, next) => {
     }
     res.redirect("/");
   });
+});
+
+router.post("/delete/:id", async (req, res, next) => {
+  try {
+    await db.connectToDatabase(client);
+    const database = client.db(process.env.DATABASE);
+    const posts = database.collection("posts");
+
+    await posts.deleteOne({
+      _id: new ObjectId(req.body.postId),
+    });
+
+    res.redirect("/");
+  } catch (error) {
+    return next(error);
+  } finally {
+    await client.close();
+  }
 });
 
 module.exports = router;
