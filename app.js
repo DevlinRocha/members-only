@@ -34,7 +34,7 @@ app.use(
   session({
     secret: process.env.SECRET_WORD,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
   })
 );
 app.use(passport.session());
