@@ -24,7 +24,6 @@ router.get("/", async (req, res, next) => {
   } catch (error) {
     console.error(error);
   } finally {
-    // Ensures that the client will close when you finish/error
     await client.close();
   }
 });
@@ -32,8 +31,6 @@ router.get("/", async (req, res, next) => {
 router.post(
   "/",
   async (req, res, next) => {
-    // Handle the request
-
     try {
       await db.connectToDatabase(client);
     } catch (error) {
@@ -91,7 +88,6 @@ router.post(
     } catch (error) {
       return next(error);
     } finally {
-      // Ensures that the client will close when you finish/error
       await client.close();
     }
   }
