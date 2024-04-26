@@ -26,28 +26,26 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
-  passport.authenticate(
-    "local",
-    {
-      successRedirect: "/",
-      failureRedirect: "/login",
-    },
-    (error, user, info, status) => {
-      if (error || !user) {
-        return res.status(400).render("layout", {
-          title: "Members Only",
-          content: "login-form",
-          message: "Something went wrong",
-          user,
-          errors: [error],
-          stylesheet: "/stylesheets/style.css",
-        });
-      }
+router.post(
+  "/",
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+  })
+);
 
-      return next();
-    }
-  )(req, res, next);
+router.use((error, req, res, next) => {
+  if (error || !req.user) {
+    return res.status(400).render("layout", {
+      title: "Members Only",
+      content: "login-form",
+      message: "Something went wrong",
+      user: req.user,
+      errors: [error],
+      stylesheet: "/stylesheets/style.css",
+    });
+  }
+  next();
 });
 
 module.exports = router;
