@@ -6,11 +6,11 @@ require("dotenv").config();
 
 const uri = process.env.MONGODB_CONNECTION;
 const client = new MongoClient(uri);
-const db = require("../utils/db");
+const { connectToDatabase } = require("../utils/db");
 
 router.get("/", async (req, res, next) => {
   try {
-    await db.connectToDatabase(client);
+    await connectToDatabase(client);
 
     res.render("layout", {
       title: "Members Only",

@@ -7,11 +7,32 @@ async function connectToDatabase(client) {
   }
 }
 
-async function getUser(parameter, value, client) {
+async function getDoc(collection, parameter, value, client) {
   try {
     const database = client.db(process.env.DATABASE);
-    const users = database.collection("users");
-    const data = await users.findOne({ [parameter]: value });
+    const coll = database.collection(collection);
+    const data = await coll.findOne({ [parameter]: value });
+
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function getDocs(
+  collection,
+  client,
+  options = { sortParam: "timeSent", sortTime: -1 }
+) {
+  const { sortParam, sortTime } = options;
+
+  try {
+    const database = client.db(process.env.DATABASE);
+    const coll = database.collection(collection);
+    const data = await coll
+      .find()
+      .sort({ [sortParam]: sortTime })
+      .toArray();
 
     return data;
   } catch (error) {
@@ -21,5 +42,6 @@ async function getUser(parameter, value, client) {
 
 module.exports = {
   connectToDatabase,
-  getUser,
+  getDoc,
+  getDocs,
 };

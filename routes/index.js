@@ -5,23 +5,12 @@ require("dotenv").config();
 
 const uri = process.env.MONGODB_CONNECTION;
 const client = new MongoClient(uri);
-const db = require("../utils/db");
-
-async function getPosts() {
-  try {
-    const database = client.db(process.env.DATABASE);
-    const posts = database.collection("posts");
-    const data = await posts.find().sort({ timeSent: -1 }).toArray();
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
-}
+const { connectToDatabase, getDocs } = require("../utils/db");
 
 router.get("/", async (req, res, next) => {
   try {
-    await db.connectToDatabase(client);
-    const posts = await getPosts().catch(console.dir);
+    await connectToDatabase(client);
+    const posts = await getDocs("posts", client).catch(console.dir);
 
     res.render("layout", {
       title: "Members Only",
@@ -41,7 +30,7 @@ router.post(
   "/",
   async (req, res, next) => {
     try {
-      await db.connectToDatabase(client);
+      await connectToDatabase(client);
     } catch (error) {
       console.error(err);
     } finally {
@@ -78,7 +67,7 @@ router.get("/logout", (req, res, next) => {
 
 router.post("/delete/:id", async (req, res, next) => {
   try {
-    await db.connectToDatabase(client);
+    await connectToDatabase(client);
     const database = client.db(process.env.DATABASE);
     const posts = database.collection("posts");
 

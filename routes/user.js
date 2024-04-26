@@ -6,7 +6,7 @@ require("dotenv").config();
 
 const uri = process.env.MONGODB_CONNECTION;
 const client = new MongoClient(uri);
-const db = require("../utils/db");
+const { connectToDatabase } = require("../utils/db");
 
 router.get("/:username", (req, res, next) => {
   res.render("layout", {
@@ -41,7 +41,7 @@ router.post(
         });
       }
 
-      await db.connectToDatabase(client);
+      await connectToDatabase(client);
 
       const database = client.db(process.env.DATABASE);
       const users = database.collection("users");

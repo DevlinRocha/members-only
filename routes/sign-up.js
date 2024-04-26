@@ -8,11 +8,11 @@ require("dotenv").config();
 
 const uri = process.env.MONGODB_CONNECTION;
 const client = new MongoClient(uri);
-const db = require("../utils/db");
+const { connectToDatabase, getDoc } = require("../utils/db");
 
 router.get("/", async (req, res, next) => {
   try {
-    await db.connectToDatabase(client);
+    await connectToDatabase(client);
 
     res.render("layout", {
       title: "Members Only",
@@ -32,7 +32,7 @@ router.post(
   "/",
   async (req, res, next) => {
     try {
-      await db.connectToDatabase(client);
+      await connectToDatabase(client);
     } catch (error) {
       return next(error);
     } finally {
@@ -44,7 +44,7 @@ router.post(
     .isEmail()
     .withMessage("valid email is required")
     .custom(async (value) => {
-      const user = await db.getUser("email", value, client);
+      const user = await getDoc("users", "email", value, client);
 
       if (user) {
         throw new Error("email already in use");

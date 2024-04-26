@@ -12,7 +12,7 @@ require("dotenv").config();
 
 const uri = process.env.MONGODB_CONNECTION;
 const client = new MongoClient(uri);
-const { getUser } = require("./utils/db");
+const { getDoc } = require("./utils/db");
 
 const indexRouter = require("./routes/index");
 const signUpRouter = require("./routes/sign-up");
@@ -45,7 +45,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await getUser("_id", new ObjectId(id), client);
+    const user = await getDoc("users", "_id", new ObjectId(id), client);
 
     done(null, user);
   } catch (err) {
@@ -60,7 +60,7 @@ passport.use(
     },
     async (email, password, done) => {
       try {
-        const user = await getUser("email", email, client);
+        const user = await getDoc("users", "email", email, client);
 
         if (!user) {
           return done({ msg: "incorrect email" }, false, null);
