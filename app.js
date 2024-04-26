@@ -63,12 +63,12 @@ passport.use(
         const user = await getUser("email", email, client);
 
         if (!user) {
-          return done(null, false, { message: "Incorrect email" });
+          return done({ msg: "incorrect email" }, false, null);
         }
 
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
-          return done(null, false, { message: "Incorrect password" });
+          return done({ msg: "incorrect password" }, false, null);
         }
 
         return done(null, user);
