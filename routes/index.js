@@ -35,22 +35,4 @@ router.get("/logout", (req, res, next) => {
   });
 });
 
-router.post("/delete/:id", async (req, res, next) => {
-  try {
-    await connectToDatabase(client);
-    const database = client.db(process.env.DATABASE);
-    const posts = database.collection("posts");
-
-    await posts.deleteOne({
-      _id: new ObjectId(req.body.postId),
-    });
-
-    res.redirect("/");
-  } catch (error) {
-    return next(error);
-  } finally {
-    await client.close();
-  }
-});
-
 module.exports = router;

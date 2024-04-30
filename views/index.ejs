@@ -1,3 +1,21 @@
+<script>
+  async function deletePost(postId) {
+    try {
+      const response = await fetch(`/post/${postId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        window.location.href = "/";
+      } else {
+        console.error("Failed to delete post");
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  }
+</script>
+
 <h1><%= title %></h1>
 
 <% if (user) { %>
@@ -23,15 +41,8 @@
     </p>
   </li>
   <% if (user?.admin === true) { %>
-  <form method="POST" action="/delete/:id">
-    <input
-      type="hidden"
-      id="hidden"
-      name="postId"
-      value="<%= `${post._id}` %>"
-    />
-    <button id="submit" type="submit">delete</button>
-  </form>
+
+  <button onclick="deletePost('<%= post._id %>')" id="delete">delete</button>
 
   <% } %> <% } else { %>
   <li>There are no posts.</li>
