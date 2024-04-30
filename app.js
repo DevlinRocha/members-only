@@ -12,6 +12,7 @@ require("dotenv").config();
 
 const uri = process.env.MONGODB_CONNECTION;
 const client = new MongoClient(uri);
+const MongoStore = require("connect-mongo");
 const { getDoc } = require("./utils/db");
 
 const indexRouter = require("./routes/index");
@@ -21,6 +22,12 @@ const loginRouter = require("./routes/login");
 const userRouter = require("./routes/user");
 
 const app = express();
+
+const sessionStore = MongoStore.create({
+  mongoUrl: process.env.MONGODB_CONNECTION,
+  dbName: process.env.DATABASE,
+  collectionName: process.env.SESSIONS_COLLECTION,
+});
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -36,6 +43,7 @@ app.use(
     secret: process.env.SECRET_WORD,
     resave: false,
     saveUninitialized: false,
+    store: sessionStore,
     cookie: {
       // 1,000ms = 1s * 60 = 1m * 60 = 1hr * 24 = 1d * 7 = 1w
       maxAge: 1000 * 60 * 60 * 24 * 7,
