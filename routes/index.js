@@ -6,6 +6,10 @@ require("dotenv").config();
 const uri = process.env.MONGODB_CONNECTION;
 const client = new MongoClient(uri);
 const { connectToDatabase, getDocs } = require("../utils/db");
+const loginRouter = require("./login");
+const postRouter = require("./post");
+const signUpRouter = require("./sign-up");
+const userRouter = require("./user");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -34,5 +38,10 @@ router.get("/logout", (req, res, next) => {
     res.redirect("/");
   });
 });
+
+router.use("/login", loginRouter);
+router.use("/post", postRouter);
+router.use("/sign-up", signUpRouter);
+router.use("/user", userRouter);
 
 module.exports = router;

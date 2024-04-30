@@ -15,12 +15,8 @@ const client = new MongoClient(uri);
 const MongoStore = require("connect-mongo");
 const { getDoc } = require("./utils/db");
 
-const indexRouter = require("./routes/index");
-const postRouter = require("./routes/post");
-const signUpRouter = require("./routes/sign-up");
-const loginRouter = require("./routes/login");
-const userRouter = require("./routes/user");
-const apiRouter = require("./routes/api");
+const router = require("./routes");
+const api = require("./routes/api");
 
 const app = express();
 
@@ -93,12 +89,8 @@ passport.use(
   )
 );
 
-app.use("/", indexRouter);
-app.use("/post", postRouter);
-app.use("/sign-up", signUpRouter);
-app.use("/login", loginRouter);
-app.use("/user", userRouter);
-app.use("/api", apiRouter);
+app.use("/", router);
+app.use("/api", api);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
