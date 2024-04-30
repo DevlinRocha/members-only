@@ -1,7 +1,7 @@
 <script>
   async function deletePost(postId) {
     try {
-      const response = await fetch(`/post/${postId}`, {
+      const response = await fetch(`api/post/${postId}`, {
         method: "DELETE",
       });
 

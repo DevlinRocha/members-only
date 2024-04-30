@@ -40,22 +40,4 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
-  try {
-    await connectToDatabase(client);
-    const database = client.db(process.env.DATABASE);
-    const posts = database.collection("posts");
-
-    await posts.deleteOne({
-      _id: new ObjectId(req.params.id),
-    });
-
-    res.status(200).send();
-  } catch (error) {
-    next(error);
-  } finally {
-    await client.close();
-  }
-});
-
 module.exports = router;
