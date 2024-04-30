@@ -15,6 +15,7 @@ const client = new MongoClient(uri);
 const { getDoc } = require("./utils/db");
 
 const indexRouter = require("./routes/index");
+const postRouter = require("./routes/post");
 const signUpRouter = require("./routes/sign-up");
 const loginRouter = require("./routes/login");
 const userRouter = require("./routes/user");
@@ -35,6 +36,10 @@ app.use(
     secret: process.env.SECRET_WORD,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      // 1,000ms = 1s * 60 = 1m * 60 = 1hr * 24 = 1d * 7 = 1w
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
   })
 );
 app.use(passport.session());
@@ -80,6 +85,7 @@ passport.use(
 );
 
 app.use("/", indexRouter);
+app.use("/post", postRouter);
 app.use("/sign-up", signUpRouter);
 app.use("/login", loginRouter);
 app.use("/user", userRouter);
