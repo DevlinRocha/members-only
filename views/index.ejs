@@ -5,7 +5,7 @@
 <% if (user) { %>
 
 <h2>post something</h2>
-<form method="POST" action="/post">
+<form method="POST" onsubmit="createPost(event)">
   <div>
     <input id="post" placeholder="post" name="post" type="text" />
   </div>

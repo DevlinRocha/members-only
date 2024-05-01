@@ -14,27 +14,7 @@ router.get("/", async (req, res, next) => {
 
     res.status(200).send(Object.values(posts));
   } catch (error) {
-    next.error(error);
-  } finally {
-    await client.close();
-  }
-});
-
-router.post("/", async (req, res, next) => {
-  try {
-    await connectToDatabase(client);
-    const database = client.db(process.env.DATABASE);
-    const posts = database.collection("posts");
-
-    await posts.insertOne({
-      sender: req.user.username,
-      content: req.body.post,
-      timeSent: new Date().toISOString(),
-    });
-
-    res.redirect("/");
-  } catch (error) {
-    next.error(error);
+    next(error);
   } finally {
     await client.close();
   }
