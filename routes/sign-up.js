@@ -30,15 +30,6 @@ router.get("/", async (req, res, next) => {
 
 router.post(
   "/",
-  async (req, res, next) => {
-    try {
-      await connectToDatabase(client);
-    } catch (error) {
-      return next(error);
-    } finally {
-      return next();
-    }
-  },
 
   body("email")
     .isEmail()
@@ -60,18 +51,20 @@ router.post(
     .withMessage("passwords do not match"),
 
   async (req, res, next) => {
-    try {
-      const errors = validationResult(req);
+    const errors = validationResult(req);
 
-      if (!errors.isEmpty()) {
-        return res.status(400).render("layout", {
-          title: "Members Only",
-          content: "sign-up-form",
-          message: "Something went wrong",
-          errors: errors.errors,
-          stylesheet: "/stylesheets/style.css",
-        });
-      }
+    if (!errors.isEmpty()) {
+      return res.status(400).render("layout", {
+        title: "Members Only",
+        content: "sign-up-form",
+        message: "Something went wrong",
+        errors: errors.errors,
+        stylesheet: "/stylesheets/style.css",
+      });
+    }
+
+    try {
+      await connectToDatabase(client);
 
       const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
 
