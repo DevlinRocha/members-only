@@ -59,8 +59,8 @@ passport.deserializeUser(async (id, done) => {
     const user = await getDoc("users", "_id", new ObjectId(id), client);
 
     done(null, user);
-  } catch (err) {
-    done(err);
+  } catch (error) {
+    done(error);
   }
 });
 
@@ -72,19 +72,18 @@ passport.use(
     async (email, password, done) => {
       try {
         const user = await getDoc("users", "email", email, client);
-
         if (!user) {
-          return done({ msg: "incorrect email" }, false, null);
+          return done({ msg: "incorrect email" }, false);
         }
 
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
-          return done({ msg: "incorrect password" }, false, null);
+          return done({ msg: "incorrect password" }, false);
         }
 
         return done(null, user);
-      } catch (err) {
-        return done(err);
+      } catch (error) {
+        return done(error);
       }
     }
   )

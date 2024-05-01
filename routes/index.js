@@ -31,9 +31,9 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/logout", (req, res, next) => {
-  req.logout((err) => {
-    if (err) {
-      return next(err);
+  req.logout((error) => {
+    if (error) {
+      return next(error);
     }
     res.redirect("/");
   });
