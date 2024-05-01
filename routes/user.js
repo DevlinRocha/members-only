@@ -2,13 +2,14 @@ const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const { MongoClient } = require("mongodb");
+const { isAuth } = require("../utils/auth");
 require("dotenv").config();
 
 const uri = process.env.MONGODB_CONNECTION;
 const client = new MongoClient(uri);
 const { connectToDatabase } = require("../utils/db");
 
-router.get("/:username", (req, res, next) => {
+router.get("/:username", isAuth, (req, res, next) => {
   res.render("layout", {
     title: "Members Only",
     content: "username",

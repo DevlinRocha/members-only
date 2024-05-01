@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const { MongoClient, ObjectId } = require("mongodb");
+const { isAuth, isAdmin } = require("../../utils/auth");
 require("dotenv").config();
 
 const uri = process.env.MONGODB_CONNECTION;
 const client = new MongoClient(uri);
 const { connectToDatabase } = require("../../utils/db");
 
-router.post("/", async (req, res, next) => {
+router.post("/", isAuth, async (req, res, next) => {
   try {
     await connectToDatabase(client);
     const database = client.db(process.env.DATABASE);
@@ -27,7 +28,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", isAdmin, async (req, res, next) => {
   try {
     await connectToDatabase(client);
     const database = client.db(process.env.DATABASE);
